@@ -48,6 +48,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     private String[] TVratings = {"TV-MA","TV-14","TV-PG","TV-G","TV-Y7","TV-Y"};
     private String[] movieRatings = {"NC-17","R","PG-13","PG","G"};
     private boolean isMovie;
+    private JSONObject resultData = null;
+    private int totalResults;
+
 
 
     @InjectView(R.id.genreSpinner)
@@ -62,6 +65,8 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     public EditText relatedEditText;
     @InjectView(R.id.actorEditText)
     public EditText actorEditText ;
+
+    //JSONArray genreData = genreJson.getJSONArray("results");
 
     private OnFragmentInteractionListener mListener;
 
@@ -140,7 +145,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
 
     public void getMoviesForSources(){
         WhatToWatchEngine mEngine = new WhatToWatchEngine();
-        Call<String> call = mEngine.getMoviesForSources(mSources);
+        Call<String> call = mEngine.getMoviesForSources(1,0,mSources);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -149,6 +154,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
                 JSONObject jsonObj = null;
                 try {
                     jsonObj = new JSONObject(response.body());
+                    totalResults = jsonObj.getInt("total_results");
+                    Log.d(TAG,"numresults: "+totalResults);
+                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,mSources);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
                 } catch(JSONException e) {
 
                 }
@@ -161,7 +171,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     }
     public void getTVShowsForSources(){
         WhatToWatchEngine mEngine = new WhatToWatchEngine();
-        Call<String> call = mEngine.getTVShowsForSources(mSources);
+        Call<String> call = mEngine.getTVShowsForSources(1,0,mSources);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -169,7 +179,12 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
                 Log.d(TAG, "getTVShowsForSources Success: " + response.body());
                 JSONObject jsonObj = null;
                 try {
-                    jsonObj = new JSONObject(response.body());
+                    resultData = new JSONObject(response.body());
+                    totalResults = resultData.getInt("total_results");
+                    Log.d(TAG,"numresults: "+totalResults);
+                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,mSources);
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
                 } catch(JSONException e) {
 
                 }
@@ -212,9 +227,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
             }else{
                 getTVShowsForSources();
             }
-            Fragment resultFrag = new SearchResultFragment();
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.contentFrame, resultFrag).commit();
         }
         else if(v.getId()==backButton.getId()) {
             Fragment moviesTVfrag = new MoviesTVFragment();

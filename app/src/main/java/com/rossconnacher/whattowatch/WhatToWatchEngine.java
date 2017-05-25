@@ -41,7 +41,7 @@ public class WhatToWatchEngine {
     public Call<String> getShowsForChannel(int channelID){
         return mService.getShowsForChannel(channelID,API_KEY);
     }
-    public Call<String> getMoviesForSources(String[] sources){
+    public Call<String> getMoviesForSources(int numItemsToFetch, int offset, String[] sources){
         String sourceString = "";
         for(int i = 0; i<sources.length;i++)
         {
@@ -52,7 +52,7 @@ public class WhatToWatchEngine {
                 sourceString += (sources[i]+",");
             }
         }
-        return mService.getMoviesForSources(sourceString, 1,0,API_KEY);
+        return mService.getMoviesForSources(sourceString, numItemsToFetch,offset,API_KEY);
     }
 
     public Call<String> getMovie(int movieID){
@@ -71,7 +71,7 @@ public class WhatToWatchEngine {
         return mService.getRegions(API_KEY);
     }
 
-    public Call<String> getTVShowsForSources(String[] sources) {
+    public Call<String> getTVShowsForSources(int numItemsToFetch, int offset, String[] sources) {
         String sourceString = "";
         for(int i = 0; i<sources.length;i++)
         {
@@ -82,6 +82,8 @@ public class WhatToWatchEngine {
                 sourceString += (sources[i]+",");
             }
         }
-        return mService.getTVShowsForSources(sourceString, 1,0,API_KEY);
+        return mService.getTVShowsForSources(sourceString, numItemsToFetch,offset,API_KEY);
     }
+
+
 }

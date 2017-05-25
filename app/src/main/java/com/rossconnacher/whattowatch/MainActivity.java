@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity implements
         SelectSourceFragment.OnFragmentInteractionListener,
         FilterFragment.OnFragmentInteractionListener,
         SearchResultFragment.OnFragmentInteractionListener,
-        MoviesTVFragment.OnFragmentInteractionListener
+        MoviesTVFragment.OnFragmentInteractionListener,
+        LoadingFragment.OnFragmentInteractionListener
 {
 
     private static final String TAG = "MainActivity";

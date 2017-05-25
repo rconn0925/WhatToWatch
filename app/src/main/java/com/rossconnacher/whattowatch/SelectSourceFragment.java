@@ -51,8 +51,8 @@ public class SelectSourceFragment extends Fragment implements View.OnClickListen
     public CheckBox crackleCheck ;
     @InjectView(R.id.CrunchyRollCheck)
     public CheckBox crunchyRollCheck;
-    @InjectView(R.id.TubiTVCheck)
-    public CheckBox tubiTVCheck;
+    @InjectView(R.id.FilmStruckCheck)
+    public CheckBox filmStruckCheck;
 
     @InjectView(R.id.selectSourceNextButton)
     public Button nextButton;
@@ -103,8 +103,8 @@ public class SelectSourceFragment extends Fragment implements View.OnClickListen
         backButton.setOnClickListener(this);
 
         if(isMovie){
-            huluCheck.setVisibility(View.GONE);
-            crunchyRollCheck.setVisibility(View.GONE);
+       //     huluCheck.setVisibility(View.GONE);
+        //    crunchyRollCheck.setVisibility(View.GONE);
         } else {
             Log.d(TAG,"whatToWatch is TVSHOW");
         }
@@ -117,7 +117,7 @@ public class SelectSourceFragment extends Fragment implements View.OnClickListen
             sourceList.add("netflix");
         }
         if(huluCheck.isChecked()){
-            sourceList.add("hulu");
+            sourceList.add("hulu_plus");
         }
         if(amazonCheck.isChecked()){
             sourceList.add("amazon_prime");
@@ -129,10 +129,10 @@ public class SelectSourceFragment extends Fragment implements View.OnClickListen
             sourceList.add("crackle");
         }
         if(crunchyRollCheck.isChecked()){
-            sourceList.add("crunchyroll");
+            sourceList.add("crunchyroll_premium");
         }
-        if(tubiTVCheck.isChecked()){
-            sourceList.add("tubi");
+        if(filmStruckCheck.isChecked()){
+            sourceList.add("film_struck");
         }
         String[] mSources = new String[sourceList.size()];
         mSources = sourceList.toArray(mSources);
@@ -175,7 +175,7 @@ public class SelectSourceFragment extends Fragment implements View.OnClickListen
                     &&!amazonCheck.isChecked()
                     &&!huluCheck.isChecked()
                     &&!HBOgoCheck.isChecked()
-                    &&!tubiTVCheck.isChecked()
+                    &&!filmStruckCheck.isChecked()
                     &&!crunchyRollCheck.isChecked()){
                 Toast.makeText(getActivity(), "Please select at least one", Toast.LENGTH_SHORT).show();
             } else {
