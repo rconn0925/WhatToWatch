@@ -52,7 +52,7 @@ public class WhatToWatchEngine {
                 sourceString += (sources[i]+",");
             }
         }
-        return mService.getMoviesForSources(sourceString, 250,API_KEY);
+        return mService.getMoviesForSources(sourceString, 1,0,API_KEY);
     }
 
     public Call<String> getMovie(int movieID){
@@ -71,4 +71,17 @@ public class WhatToWatchEngine {
         return mService.getRegions(API_KEY);
     }
 
+    public Call<String> getTVShowsForSources(String[] sources) {
+        String sourceString = "";
+        for(int i = 0; i<sources.length;i++)
+        {
+            if(i==sources.length-1){
+                sourceString += sources[i];
+            }
+            else{
+                sourceString += (sources[i]+",");
+            }
+        }
+        return mService.getTVShowsForSources(sourceString, 1,0,API_KEY);
+    }
 }

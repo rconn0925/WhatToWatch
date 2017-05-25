@@ -1,5 +1,9 @@
 package com.rossconnacher.whattowatch;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,27 +11,27 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        SelectSourceFragment.OnFragmentInteractionListener,
+        FilterFragment.OnFragmentInteractionListener,
+        SearchResultFragment.OnFragmentInteractionListener,
+        MoviesTVFragment.OnFragmentInteractionListener
+{
 
     private static final String TAG = "MainActivity";
     private String requestToken;
 
     private int NetflixChannel = 202;
     private int HBOChannel = 36;
-    private int Amazon_PrimeChannel = 140;
+    private int AmazonChannel = 140;
     private int HuluChannel = 211;
     private int CrunchyrollChannel = 1732;
-
-    private JSONObject NetflixChannelData = null;
-    private JSONObject HBOChannelData = null;
-    private JSONObject Amazon_PrimeChannelData = null;
-    private JSONObject CrunchyrollChannelData = null;
-    private JSONObject HuluChannelData = null;
+    private int CrackleChannel = 107;
+    private int TubiTVChannel = 1441;
 
     private WhatToWatchEngine mEngine;
 
@@ -35,14 +39,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.content_main);
         mEngine = new WhatToWatchEngine();
-        getChannelData(NetflixChannel);
+        //getChannelData(AmazonChannel);
+        getGenres();
+        getMovie(147509);
+        Fragment moviesTVfrag = new MoviesTVFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.contentFrame, moviesTVfrag).commit();
 
+        /*
+        getChannelData(NetflixChannel);
         String[] sources = new String[]{"crunchyroll"};
         getMovies(sources);
+        */
 
     }
+    public void getMovie(int movieID){
+        Call<String> call = mEngine.getMovie(movieID);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "GetChannelData Success: " + response.toString());
+                Log.d(TAG, "GetChannelData Success: " + response.body());
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = new JSONObject(response.body());
+                } catch(JSONException e) {
+
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG,"Get channel data fail");
+            }
+        });
+
+    }
+
 
     public void getChannelData(int channelID){
         Call<String> call = mEngine.getChannelData(channelID);
@@ -63,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG,"Get channel data fail");
             }
         });
-
     }
 
     public void getShowsForChannel(int channelID){
@@ -86,17 +119,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void getMovies(String[] sources){
-        Call<String> call = mEngine.getMoviesForSources(sources);
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public void getGenres() {
+        Call<String> call = mEngine.getGenres();
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d(TAG, "GetMovies Success: " + response.toString());
-                Log.d(TAG, "GetMovies Success: " + response.body());
+                Log.d(TAG, "GetGenres Success: " + response.toString());
+                Log.d(TAG, "GetGenres Success: " + response.body());
                 JSONObject jsonObj = null;
                 if(response.body()!=null){
                     try {
                         jsonObj = new JSONObject(response.body());
+                        SharedPreferences.Editor editor = getSharedPreferences("MyPrefs", MODE_PRIVATE).edit();
+                        editor.putString("GenreData",jsonObj.toString());
+                        editor.commit();
                     } catch(JSONException e) {
 
                     }
@@ -109,6 +152,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

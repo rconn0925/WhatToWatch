@@ -31,7 +31,7 @@ public interface WhatToWatchService {
     Call<String> getShowsForChannel(@Query("id") int id, @Query("api_key") String apiKey);
 
     @GET("/v2/movies/")
-    Call<String> getMoviesForSources(@Query("sources") String sources,@Query("limit") int limit, @Query("api_key") String apiKey);
+    Call<String> getMoviesForSources(@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);
 
     @GET("/v2/movies/{id}")
     Call<String> getMovie(@Path("id") int id, @Query("api_key") String apiKey);
@@ -50,6 +50,8 @@ public interface WhatToWatchService {
     @GET("/v2/regions/")
     Call<String> getRegions(@Query("api_key") String apiKey);
 
+    @GET("/v2/shows/")
+    Call<String> getTVShowsForSources(@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);
     //maybe add retrieve all credits for single person
 
 }

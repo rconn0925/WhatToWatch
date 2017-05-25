@@ -3,58 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rossconnacher.whattowatch.FilterFragment"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/tvmoviesLayout"
-        android:gravity="center_horizontal"
-        android:layout_centerHorizontal="true">
+    android:padding="8dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="What do you want to watch?"
-            android:textSize="18sp"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Movies"
-                android:id="@+id/MoviesCheck"/>
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TV Shows"
-                android:id="@+id/TVShowsCheck"/>
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_below="@+id/tvmoviesLayout"
-        android:id="@+id/settingsDevider"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@id/settingsDevider"
         android:gravity="center_horizontal"
-        android:layout_centerHorizontal="true">
+        android:layout_centerInParent="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -86,20 +43,13 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Amazon Prime"
-                    android:id="@+id/AmazonPrimeCheck"/>
+                    android:text="Amazon"
+                    android:id="@+id/AmazonCheck"/>
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="HBO GO"
                     android:id="@+id/HBOgoCheck"/>
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="FlixFling"
-                    android:id="@+id/FlixFlingCheck"/>
-
-
             </LinearLayout>
 
             <LinearLayout
@@ -123,25 +73,33 @@
                     android:layout_height="wrap_content"
                     android:text="TubiTV"
                     android:id="@+id/TubiTVCheck"/>
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ShareTV"
-                    android:id="@+id/ShareTVCheck"/>
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VUDU"
-                    android:id="@+id/VUDUCheck"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
+
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:clickable="true"
+        android:src="@drawable/ic_arrow_back_black_24dp"
+        android:id="@+id/selectSourceBack"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 2/3"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
-        android:id="@+id/nextButton"
+        android:id="@+id/selectSourceNextButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
 

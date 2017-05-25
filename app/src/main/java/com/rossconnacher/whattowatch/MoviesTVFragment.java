@@ -1,35 +1,52 @@
 package com.rossconnacher.whattowatch;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SearchInputFragment.OnFragmentInteractionListener} interface
+ * {@link MoviesTVFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SearchInputFragment#newInstance} factory method to
+ * Use the {@link MoviesTVFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SearchInputFragment extends Fragment {
+public class MoviesTVFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "MoviesTVFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+
+    @InjectView(R.id.MoviesRadioButton)
+    public RadioButton moviesRadioButton ;
+    @InjectView(R.id.TVShowsRadioButton)
+    public RadioButton TVShowsRadioButton;
+    @InjectView(R.id.Next1Button)
+    public Button next;
+
     private OnFragmentInteractionListener mListener;
 
-    public SearchInputFragment() {
+    public MoviesTVFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +56,11 @@ public class SearchInputFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchInputFragment.
+     * @return A new instance of fragment MoviesTVFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SearchInputFragment newInstance(String param1, String param2) {
-        SearchInputFragment fragment = new SearchInputFragment();
+    public static MoviesTVFragment newInstance(String param1, String param2) {
+        MoviesTVFragment fragment = new MoviesTVFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -64,7 +81,25 @@ public class SearchInputFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_input, container, false);
+        View view = inflater.inflate(R.layout.fragment_movies_tv, container, false);
+        ButterKnife.inject(this,view);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isMovie = false;
+                if(TVShowsRadioButton.isChecked()){
+                    //type = "TV Shows";
+                    isMovie=false;
+                } else if(moviesRadioButton.isChecked()) {
+                    isMovie= true;
+                }
+                Log.d(TAG,"whatToWatch: isMovie: "+ isMovie);
+                Fragment SelectSourceFrag = SelectSourceFragment.newInstance(isMovie);
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.contentFrame, SelectSourceFrag).commit();
+            }
+        });
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
