@@ -156,7 +156,12 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
                     jsonObj = new JSONObject(response.body());
                     totalResults = jsonObj.getInt("total_results");
                     Log.d(TAG,"numresults: "+totalResults);
-                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,mSources);
+                    boolean hasActor = false;
+                    String actorName = actorEditText.getText().toString();
+                    String relateTo = relatedEditText.getText().toString();
+                    String genre = genreSpinner.getSelectedItem().toString();
+                    String rating = ratingSpinner.getSelectedItem().toString();
+                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,genre,hasActor,actorName,relateTo,rating,mSources);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
                 } catch(JSONException e) {
@@ -182,7 +187,12 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
                     resultData = new JSONObject(response.body());
                     totalResults = resultData.getInt("total_results");
                     Log.d(TAG,"numresults: "+totalResults);
-                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,mSources);
+                    boolean hasActor = false;
+                    String actorName = actorEditText.getText().toString();
+                    String relateTo = relatedEditText.getText().toString();
+                    String rating = ratingSpinner.getSelectedItem().toString();
+                    String genre = genreSpinner.getSelectedItem().toString();
+                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,genre,hasActor,actorName,relateTo,rating,mSources);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
                 } catch(JSONException e) {

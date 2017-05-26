@@ -37,13 +37,22 @@ public class LoadingFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_PARAM3 = "param3";
-
+    private static final String ARG_PARAM4 = "param4";
+    private static final String ARG_PARAM5 = "param5";
+    private static final String ARG_PARAM6 = "param6";
+    private static final String ARG_PARAM7 = "param7";
+    private static final String ARG_PARAM8 = "param8";
     // TODO: Rename and change types of parameters
     private int numDataElements;
 
     private OnFragmentInteractionListener mListener;
     private String[] mSources;
     private boolean isMovie;
+    private String mGenre;
+    private String mRating;
+    private String mActorName;
+    private String mRelatedTo;
+    private boolean hasActor;
 
     private JSONArray allData;
     public LoadingFragment() {
@@ -56,12 +65,17 @@ public class LoadingFragment extends Fragment {
      * @return A new instance of fragment LoadingFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LoadingFragment newInstance(boolean isMovie,int numDataElements, String[] sources) {
+    public static LoadingFragment newInstance(boolean isMovie,int numDataElements,String genre,boolean hasActor,String actorName,String relatedTo, String rating, String[] sources) {
         LoadingFragment fragment = new LoadingFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, numDataElements);
         args.putStringArray(ARG_PARAM2,sources);
         args.putBoolean(ARG_PARAM3,isMovie);
+        args.putBoolean(ARG_PARAM4, hasActor);
+        args.putString(ARG_PARAM5,actorName);
+        args.putString(ARG_PARAM6,relatedTo);
+        args.putString(ARG_PARAM7,rating);
+        args.putString(ARG_PARAM8,genre);
         fragment.setArguments(args);
         Log.d(TAG, "args: " + isMovie+ " "+numDataElements);
         return fragment;
@@ -74,6 +88,11 @@ public class LoadingFragment extends Fragment {
             numDataElements = getArguments().getInt(ARG_PARAM1);
             mSources = getArguments().getStringArray(ARG_PARAM2);
             isMovie = getArguments().getBoolean(ARG_PARAM3);
+            hasActor = getArguments().getBoolean(ARG_PARAM4);
+            mActorName = getArguments().getString(ARG_PARAM5);
+            mRelatedTo = getArguments().getString(ARG_PARAM6);
+            mRating = getArguments().getString(ARG_PARAM7);
+            mGenre = getArguments().getString(ARG_PARAM8);
             Log.d(TAG, "args: " + isMovie+ " "+numDataElements);
         }
         allData = new JSONArray();
@@ -210,6 +229,7 @@ public class LoadingFragment extends Fragment {
 
     public void filterResults(){
         Log.d(TAG, "filterResult: datalength:" +allData.length());
+        JSONArray selectedData = new JSONArray();
         for(int i = 0; i< allData.length();i++){
 
         }

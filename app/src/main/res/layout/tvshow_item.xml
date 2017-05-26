@@ -6,7 +6,8 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/showImage"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/showRating"
+            android:id="@+id/showSource"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"/>
 
@@ -31,7 +32,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/showStars"/>
+        android:id="@+id/showRating" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/showCast"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements
         mEngine = new WhatToWatchEngine();
         //getChannelData(AmazonChannel);
         getGenres();
-        getMovie(147509);
+        //getMovie(147509);
         Fragment moviesTVfrag = new MoviesTVFragment();
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.contentFrame, moviesTVfrag).commit();

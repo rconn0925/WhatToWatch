@@ -41,9 +41,11 @@ public interface WhatToWatchService {
     Call<String> getMovieImages(@Path("id") int id,@Query("filter") String filter, @Query("api_key") String apiKey);
 
     @GET("/v2/movies/{id}/related")
-    Call<String> getRelatedMovies(@Path("id") int id, @Query("api_key") String apiKey);
+    Call<String> getRelatedMovies(@Path("id") int id,@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);
 
-    //do I need to getMovieVideos(trailers)
+    @GET("/v2/shows/{id}/related")
+    Call<String> getRelatedShows(@Path("id") int id,@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);
+
     @GET("/v2/genres/")
     Call<String> getGenres(@Query("api_key") String apiKey);
 

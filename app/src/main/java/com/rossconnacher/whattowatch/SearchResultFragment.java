@@ -29,8 +29,8 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mSelectedDataJsonArrayStr;
+
 
     @InjectView(R.id.searchAgainButton)
     public Button searchAgainButton;
@@ -45,16 +45,14 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     *
      * @return A new instance of fragment SearchResultFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SearchResultFragment newInstance(String param1, String param2) {
+    public static SearchResultFragment newInstance(String selectedDataJsonArrayStr) {
         SearchResultFragment fragment = new SearchResultFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, selectedDataJsonArrayStr);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,8 +61,7 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mSelectedDataJsonArrayStr = getArguments().getString(ARG_PARAM1);
         }
     }
 
