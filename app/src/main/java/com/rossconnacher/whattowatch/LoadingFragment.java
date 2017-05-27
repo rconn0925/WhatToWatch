@@ -10,10 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rossconnacher.whattowatch.models.Media;
+import com.rossconnacher.whattowatch.models.Movie;
+import com.rossconnacher.whattowatch.models.TVShow;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import butterknife.ButterKnife;
@@ -53,8 +58,14 @@ public class LoadingFragment extends Fragment {
     private String mActorName;
     private String mRelatedTo;
     private boolean hasActor;
-
+    private int mTitleID;
+    private int allDataLength;
+  //  private ArrayList<Movie> mMovies;
+   // private ArrayList<TVShow> mShows;
+    private ArrayList<Media> mMedia;
     private JSONArray allData;
+    private WhatToWatchEngine mEngine;
+
     public LoadingFragment() {
         // Required empty public constructor
     }
@@ -91,11 +102,17 @@ public class LoadingFragment extends Fragment {
             hasActor = getArguments().getBoolean(ARG_PARAM4);
             mActorName = getArguments().getString(ARG_PARAM5);
             mRelatedTo = getArguments().getString(ARG_PARAM6);
+            mRelatedTo = mRelatedTo.replaceAll("\\s+","");
             mRating = getArguments().getString(ARG_PARAM7);
             mGenre = getArguments().getString(ARG_PARAM8);
-            Log.d(TAG, "args: " + isMovie+ " "+numDataElements);
+            Log.d(TAG, "args relatedTo: " + mRelatedTo);
         }
         allData = new JSONArray();
+        mEngine = new WhatToWatchEngine();
+       // mShows = new ArrayList<>();
+        //mMovies = new ArrayList<>();
+        mMedia = new ArrayList<>();
+        allDataLength = 0;
 
     }
 
@@ -105,11 +122,14 @@ public class LoadingFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_loading, container, false);
         ButterKnife.inject(this,view);
+        search(isMovie,mRelatedTo);
+        /*
         if(isMovie){
             getAllMoviesForSources();
         } else {
             getAllTVShowsForSources();
         }
+        */
         return view;
     }
 
@@ -132,7 +152,7 @@ public class LoadingFragment extends Fragment {
     }
 
     public void getAllMoviesForSources(){
-        WhatToWatchEngine mEngine = new WhatToWatchEngine();
+
         for(int i = 0; i<numDataElements;i+=250){
             final int numItemsFetched;
             if(numDataElements-i<250) {
@@ -172,8 +192,9 @@ public class LoadingFragment extends Fragment {
             });
         }
     }
+
     public void getAllTVShowsForSources(){
-        WhatToWatchEngine mEngine = new WhatToWatchEngine();
+        
         for(int i = 0; i<numDataElements;i+=250) {
             final int numItemsFetched;
             if (numDataElements - i < 250) {
@@ -193,6 +214,7 @@ public class LoadingFragment extends Fragment {
                     try {
                         jsonObj = new JSONObject(response.body());
                         JSONArray resultsJson = jsonObj.getJSONArray("results");
+
                         Log.d(TAG, "resultJSON" +resultsJson);
                         allData = MergeJSONArray(allData,resultsJson);
 
@@ -215,6 +237,137 @@ public class LoadingFragment extends Fragment {
         }
     }
 
+    public void search(final boolean isMovie, String title){
+        Call<String> call = mEngine.search(isMovie,title);
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "search Success: " + response.toString());
+                Log.d(TAG, "search Success: " + response.body());
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(response.body());
+                    JSONArray resultsJson = jsonObject.getJSONArray("results");
+                    if(resultsJson.length()==0){
+                        Log.d(TAG, "search resultJSON is empty");
+                        mTitleID = -1;
+                        Fragment filterFrag = FilterFragment.newInstance(isMovie,mSources);
+                        FragmentManager fragmentManager = getFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.contentFrame, filterFrag).commit();
+                    } else {
+                        Log.d(TAG, "search resultJSON" +resultsJson);
+                        int id = resultsJson.getJSONObject(0).getInt("id");
+                        Log.d(TAG, "search titleID: " +id);
+                        mTitleID = id;
+                        getRelatedMediaForSources();
+                    }
+
+
+                } catch(JSONException e) {
+                    Log.w(TAG, e.toString());
+                }
+
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG,"Get channel data fail");
+            }
+        });
+    }
+
+    public void getRelatedMediaForSources(){
+        Call<String> call;
+        if(isMovie){
+            call = mEngine.getRelatedMovies(mTitleID,mSources);
+        } else {
+            call = mEngine.getRelatedShows(mTitleID,mSources);
+        }
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "getRelatedMoviesForSources Success: " + response.toString());
+                Log.d(TAG, "getRelatedMoviesForSources Success: " + response.body());
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = new JSONObject(response.body());
+                    JSONArray resultsJson = jsonObj.getJSONArray("results");
+                    Log.d(TAG, "resultJSON" + resultsJson.toString());
+                    allData = resultsJson;
+                    allDataLength = allData.length();
+
+                    for (int i = 0; i < allData.length(); i++) {
+                        String strID = (((JSONObject) allData.get(i)).get("id")).toString();
+                        Log.d(TAG, "data" + i + ": " + strID);
+                        int id = Integer.parseInt(strID);
+                        getMediaData(i,id);
+                    }
+
+                } catch (JSONException e) {
+
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG,"getTVShowsForSources fail");
+            }
+        });
+
+    }
+
+    public void getMediaData(final int counter, int mediaID){
+        Call<String> call;
+        if(isMovie){
+            call = mEngine.getMovie(mediaID);
+        } else {
+            call = mEngine.getTVShow(mediaID);
+        }
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "getMovie Success: " + response.toString());
+                Log.d(TAG, "getMovie Success: " + response.body());
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = new JSONObject(response.body());
+                    //JSONArray resultsJson = jsonObj.getJSONArray("results");
+                    Log.d(TAG, "resultJSON" +jsonObj.toString(4));
+
+
+                    String title,rating,overview,imgUrl;
+                    title =jsonObj.get("title").toString();
+                    rating =jsonObj.getString("rating");
+                    overview =jsonObj.getString("overview");
+                    if(isMovie){
+                        imgUrl = jsonObj.getString("poster_240x342");
+                    }else {
+                        imgUrl = jsonObj.getString("artwork_448x252");
+                    }
+
+                    Media media = new Media(title,rating,overview,imgUrl);
+                    mMedia.add(media);
+                    Log.d(TAG,"getTitle: "+ media.getTitle());
+                    if(counter==allDataLength-1){
+                        Fragment resultFrag = SearchResultFragment.newInstance(isMovie,mMedia);
+                        FragmentManager fragmentManager = getFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.contentFrame, resultFrag).commit();
+                    }
+
+                } catch(JSONException e) {
+                    Log.e(TAG,"error"+ e);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG, "getTVShowsForSources fail");
+            }
+        });
+
+    }
+
     public JSONArray MergeJSONArray(JSONArray o1, JSONArray o2){
         JSONArray mergedObj = o1;
         for (int i = 0; i < o2.length(); i++) {
@@ -232,7 +385,19 @@ public class LoadingFragment extends Fragment {
         JSONArray selectedData = new JSONArray();
         for(int i = 0; i< allData.length();i++){
 
+            String dataGenre;
+            try {
+                dataGenre  = allData.get(i).toString();
+                Log.d(TAG,"filterResult: get(i)"+dataGenre);
+                if(dataGenre.equals(mGenre)){
+                    selectedData.put(allData.get(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
+        Log.d(TAG, "filterResult: selectedDatalength:" +selectedData.length());
     }
 
 

@@ -41,10 +41,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         final Movie movie = mMovies.get(position);
         holder.movieOverview.setText(movie.getOverview());
         holder.movieTitle.setText(movie.getTitle());
-        String castString = android.text.TextUtils.join(",", movie.getCast());
-        holder.movieCast.setText(castString);
         holder.movieRating.setText(movie.getRating());
-        holder.movieSource.setText(movie.getSource());
         //Picasso image setting will probably need changing
         Picasso.with(mContext).load(movie.getImageUrl()).into(holder.movieImage);
     }

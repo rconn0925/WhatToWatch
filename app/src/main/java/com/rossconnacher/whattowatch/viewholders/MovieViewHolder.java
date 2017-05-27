@@ -18,12 +18,9 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "MovieViewHolder";
 
-    @InjectView(R.id.movieSource)
-    public TextView movieSource;
+
     @InjectView(R.id.movieTitle)
     public TextView movieTitle;
-    @InjectView(R.id.movieCast)
-    public TextView movieCast;
     @InjectView(R.id.movieOverview)
     public TextView movieOverview;
     @InjectView(R.id.movieRating)

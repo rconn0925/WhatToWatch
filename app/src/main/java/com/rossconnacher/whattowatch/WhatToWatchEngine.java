@@ -21,7 +21,10 @@ public class WhatToWatchEngine {
     //private static final String API_KEY = "8a2a11a34a589b80b304923b01e7908bfd56978b";
 
     //This is the 2nd key
-    private static final String API_KEY = "b7f02f3cd0d18e233ec086a835aa6fe113896e15";
+    //private static final String API_KEY = "b7f02f3cd0d18e233ec086a835aa6fe113896e15";
+
+    //This is the 3rd key
+    private static final String API_KEY = "993712110c7f5722f12137d0771a6bed01e03390";
     public WhatToWatchEngine() {
         Retrofit retrofit = new Retrofit.Builder()
                 //.baseUrl("https://api.themoviedb.org/3/")
@@ -59,10 +62,13 @@ public class WhatToWatchEngine {
     public Call<String> getMovie(int movieID){
         return mService.getMovie(movieID,API_KEY);
     }
+    public Call<String> getTVShow(int showID){
+        return mService.getTVShow(showID,API_KEY);
+    }
     public Call<String> getMovieImages(int movieID,String filter){
         return mService.getMovieImages(movieID,filter,API_KEY);
     }
-    public Call<String> getRelatedMovies(int movieID,int numItemsToFetch, int offset, String[] sources){
+    public Call<String> getRelatedMovies(int movieID, String[] sources){
         String sourceString = "";
         for(int i = 0; i<sources.length;i++)
         {
@@ -73,9 +79,9 @@ public class WhatToWatchEngine {
                 sourceString += (sources[i]+",");
             }
         }
-        return mService.getRelatedMovies(movieID,sourceString,numItemsToFetch,offset,API_KEY);
+        return mService.getRelatedMovies(movieID,sourceString,API_KEY);
     }
-    public Call<String> getRelatedShows(int showID,int numItemsToFetch, int offset, String[] sources){
+    public Call<String> getRelatedShows(int showID, String[] sources){
         String sourceString = "";
         for(int i = 0; i<sources.length;i++)
         {
@@ -86,7 +92,7 @@ public class WhatToWatchEngine {
                 sourceString += (sources[i]+",");
             }
         }
-        return mService.getRelatedShows(showID,sourceString,numItemsToFetch,offset,API_KEY);
+        return mService.getRelatedShows(showID,sourceString,API_KEY);
     }
     public Call<String> getGenres(){
         return mService.getGenres(API_KEY);
@@ -108,6 +114,13 @@ public class WhatToWatchEngine {
         }
         return mService.getTVShowsForSources(sourceString, numItemsToFetch,offset,API_KEY);
     }
+    public Call<String> search(boolean isMovie,String title){
 
+        if(isMovie){
+            return mService.search(title,"movie","title","exact",API_KEY);
+        } else{
+            return mService.search(title,"show","title","exact",API_KEY);
+        }
 
+    }
 }

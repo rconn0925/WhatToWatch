@@ -36,21 +36,27 @@ public interface WhatToWatchService {
     @GET("/v2/movies/{id}")
     Call<String> getMovie(@Path("id") int id, @Query("api_key") String apiKey);
 
+    @GET("/v2/shows/{id}")
+    Call<String> getTVShow(@Path("id") int id, @Query("api_key") String apiKey);
+
     //filter - valid options include: thumbnails, posters, banners, backgrounds
     @GET("/v2/movies/{id}/images")
     Call<String> getMovieImages(@Path("id") int id,@Query("filter") String filter, @Query("api_key") String apiKey);
 
     @GET("/v2/movies/{id}/related")
-    Call<String> getRelatedMovies(@Path("id") int id,@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);
+    Call<String> getRelatedMovies(@Path("id") int id,@Query("sources") String sources, @Query("api_key") String apiKey);
 
     @GET("/v2/shows/{id}/related")
-    Call<String> getRelatedShows(@Path("id") int id,@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);
+    Call<String> getRelatedShows(@Path("id") int id,@Query("sources") String sources,@Query("api_key") String apiKey);
 
     @GET("/v2/genres/")
     Call<String> getGenres(@Query("api_key") String apiKey);
 
     @GET("/v2/regions/")
     Call<String> getRegions(@Query("api_key") String apiKey);
+
+    @GET("/v2/search")
+    Call<String> search(@Query("query") String title,@Query("type") String type, @Query("field") String field,@Query("precision") String precision,@Query("api_key") String apiKey);
 
     @GET("/v2/shows/")
     Call<String> getTVShowsForSources(@Query("sources") String sources,@Query("limit") int limit, @Query("offset") int offset, @Query("api_key") String apiKey);

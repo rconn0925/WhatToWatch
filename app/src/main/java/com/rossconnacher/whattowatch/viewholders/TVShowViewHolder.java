@@ -19,10 +19,6 @@ public class TVShowViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.showTitle)
     public TextView showTitle;
-    @InjectView(R.id.showSource)
-    public TextView showSource;
-    @InjectView(R.id.showCast)
-    public TextView showCast;
     @InjectView(R.id.showOverview)
     public TextView showOverview;
     @InjectView(R.id.showRating)

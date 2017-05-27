@@ -52,20 +52,23 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     private int totalResults;
 
 
-
+    /*
     @InjectView(R.id.genreSpinner)
     public Spinner genreSpinner;
     @InjectView(R.id.ratingSpinner)
     public Spinner ratingSpinner;
+    */
     @InjectView(R.id.searchButton)
     public Button searchButton;
     @InjectView(R.id.filterBack)
     public ImageView backButton;
+
     @InjectView(R.id.relatedEditText)
     public EditText relatedEditText;
+    /*
     @InjectView(R.id.actorEditText)
     public EditText actorEditText ;
-
+    */
     //JSONArray genreData = genreJson.getJSONArray("results");
 
     private OnFragmentInteractionListener mListener;
@@ -126,17 +129,17 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
         ButterKnife.inject(this,view);
         ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mGenres);
-        genreSpinner.setAdapter(genreAdapter);
+      //  genreSpinner.setAdapter(genreAdapter);
         searchButton.setOnClickListener(this);
-        backButton.setOnClickListener(this);
-        actorEditText.setHint("Enter actor or actress");
+      //  backButton.setOnClickListener(this);
+       // actorEditText.setHint("Enter actor or actress");
         if(isMovie){
             ArrayAdapter<String> movieAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, movieRatings);
-            ratingSpinner.setAdapter(movieAdapter);
+      //      ratingSpinner.setAdapter(movieAdapter);
             relatedEditText.setHint("Enter Movie");
         } else{
             ArrayAdapter<String> TVAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, TVratings);
-            ratingSpinner.setAdapter(TVAdapter);
+       //     ratingSpinner.setAdapter(TVAdapter);
             relatedEditText.setHint("Enter TV Show");
         }
 
@@ -157,11 +160,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
                     totalResults = jsonObj.getInt("total_results");
                     Log.d(TAG,"numresults: "+totalResults);
                     boolean hasActor = false;
-                    String actorName = actorEditText.getText().toString();
+                 //   String actorName = actorEditText.getText().toString();
                     String relateTo = relatedEditText.getText().toString();
-                    String genre = genreSpinner.getSelectedItem().toString();
-                    String rating = ratingSpinner.getSelectedItem().toString();
-                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,genre,hasActor,actorName,relateTo,rating,mSources);
+                 //   String genre = genreSpinner.getSelectedItem().toString();
+                  //  String rating = ratingSpinner.getSelectedItem().toString();
+                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,"",hasActor,"",relateTo,"",mSources);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
                 } catch(JSONException e) {
@@ -188,11 +191,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
                     totalResults = resultData.getInt("total_results");
                     Log.d(TAG,"numresults: "+totalResults);
                     boolean hasActor = false;
-                    String actorName = actorEditText.getText().toString();
+                   // String actorName = actorEditText.getText().toString();
                     String relateTo = relatedEditText.getText().toString();
-                    String rating = ratingSpinner.getSelectedItem().toString();
-                    String genre = genreSpinner.getSelectedItem().toString();
-                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,genre,hasActor,actorName,relateTo,rating,mSources);
+                   // String rating = ratingSpinner.getSelectedItem().toString();
+                    //String genre = genreSpinner.getSelectedItem().toString();
+                    Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,"",hasActor,"",relateTo,"",mSources);
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
                 } catch(JSONException e) {

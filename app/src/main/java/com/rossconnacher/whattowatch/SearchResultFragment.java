@@ -5,10 +5,24 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.rossconnacher.whattowatch.adapters.MediaAdapter;
+import com.rossconnacher.whattowatch.models.Media;
+import com.rossconnacher.whattowatch.models.Movie;
+import com.rossconnacher.whattowatch.models.TVShow;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -27,15 +41,22 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "SearchResultFragment" ;
 
     // TODO: Rename and change types of parameters
-    private String mSelectedDataJsonArrayStr;
-
+    private ArrayList<Movie> mMovies;
+    private ArrayList<TVShow> mShows;
+    private ArrayList<Media> mMedia;
+    private boolean isMovie;
 
     @InjectView(R.id.searchAgainButton)
     public Button searchAgainButton;
+    @InjectView(R.id.displayResultsView)
+    public RecyclerView mView;
 
     private OnFragmentInteractionListener mListener;
+    private GridLayoutManager mLayoutManager;
+    private MediaAdapter mAdapter;
 
     public SearchResultFragment() {
         // Required empty public constructor
@@ -49,10 +70,12 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
      * @return A new instance of fragment SearchResultFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SearchResultFragment newInstance(String selectedDataJsonArrayStr) {
+
+    public static SearchResultFragment newInstance(boolean isMovie,ArrayList<Media> medias) {
         SearchResultFragment fragment = new SearchResultFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, selectedDataJsonArrayStr);
+        args.putSerializable(ARG_PARAM1, medias);
+        args.putBoolean(ARG_PARAM2, isMovie);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,8 +83,14 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //mMovies = new ArrayList<>();
+       // mShows = new ArrayList<>();
+        mMedia = new ArrayList<>();
         if (getArguments() != null) {
-            mSelectedDataJsonArrayStr = getArguments().getString(ARG_PARAM1);
+            isMovie = getArguments().getBoolean(ARG_PARAM2);
+            mMedia = (ArrayList<Media>) getArguments().getSerializable(ARG_PARAM1);
+           Log.d(TAG,"media: "+mMedia.get(0).getTitle());
+
         }
     }
 
@@ -72,6 +101,13 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
         ButterKnife.inject(this,view);
         searchAgainButton.setOnClickListener(this);
+
+        mLayoutManager = new GridLayoutManager(getActivity(), 1);
+        mView.setLayoutManager(mLayoutManager);
+        mView.addItemDecoration(new SimpleDividerItemDecoration(this.getActivity()));
+        mAdapter = new MediaAdapter(getActivity(), mMedia);
+        mView.setAdapter(mAdapter);
+
         return view;
     }
 

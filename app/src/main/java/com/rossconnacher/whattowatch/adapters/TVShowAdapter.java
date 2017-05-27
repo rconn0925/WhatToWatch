@@ -41,10 +41,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowViewHolder>{
         final TVShow show = mShows.get(position);
         holder.showOverview.setText(show.getOverview());
         holder.showTitle.setText(show.getTitle());
-        String castString = android.text.TextUtils.join(",", show.getCast());
-        holder.showCast.setText(castString);
         holder.showRating.setText(show.getRating());
-        holder.showSource.setText(show.getSource());
         //Picasso image setting will probably need changing
         Picasso.with(mContext).load(show.getImageUrl()).into(holder.showImage);
     }
