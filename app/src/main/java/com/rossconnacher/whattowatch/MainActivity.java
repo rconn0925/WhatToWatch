@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity implements
         FilterFragment.OnFragmentInteractionListener,
         SearchResultFragment.OnFragmentInteractionListener,
         MoviesTVFragment.OnFragmentInteractionListener,
-        LoadingFragment.OnFragmentInteractionListener
+        LoadingFragment.OnFragmentInteractionListener,
+        WelcomeFragment.OnFragmentInteractionListener
 {
 
     private static final String TAG = "MainActivity";
@@ -44,16 +45,10 @@ public class MainActivity extends AppCompatActivity implements
         mEngine = new WhatToWatchEngine();
         //getChannelData(AmazonChannel);
         getGenres();
-        //getMovie(147509);
-        Fragment moviesTVfrag = new MoviesTVFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.contentFrame, moviesTVfrag).commit();
 
-        /*
-        getChannelData(NetflixChannel);
-        String[] sources = new String[]{"crunchyroll"};
-        getMovies(sources);
-        */
+        Fragment welcomeFrag = new WelcomeFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.contentFrame, welcomeFrag).commit();
 
     }
     public void getMovie(int movieID){

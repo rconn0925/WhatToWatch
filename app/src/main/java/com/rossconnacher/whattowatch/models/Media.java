@@ -25,12 +25,17 @@ public class Media implements Serializable {
     private String overview;
     private String imageUrl;
 
+    private int id;
+    private String source;
 
-    public Media(String title, String rating, String overview, String imageUrl){
+
+    public Media(String title, int id, String source, String rating, String overview, String imageUrl){
         this.title = title;
         this.rating = rating;
         this.overview = overview;
         this.imageUrl = imageUrl;
+        this.id = id;
+        this.source = source;
     }
 
     public String getImageUrl(){
@@ -45,5 +50,7 @@ public class Media implements Serializable {
     public String getOverview(){
         return overview;
     }
+    public String getSource() {return source;}
+    public int getId() {return id;}
 
 }

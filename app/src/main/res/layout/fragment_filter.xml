@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rossconnacher.whattowatch.FilterFragment"
+    android:id="@+id/filterFragLayout"
     android:padding="8dp">
 
     <LinearLayout
@@ -23,12 +24,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/genreSpinner"
             android:background="@drawable/black_border"/>
-
+        -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Advanced Filter (optional):" />
-          -->
+            android:id="@+id/relatedLabel" />
+
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -24,7 +24,13 @@ public class WhatToWatchEngine {
     //private static final String API_KEY = "b7f02f3cd0d18e233ec086a835aa6fe113896e15";
 
     //This is the 3rd key
-    private static final String API_KEY = "993712110c7f5722f12137d0771a6bed01e03390";
+    //private static final String API_KEY = "993712110c7f5722f12137d0771a6bed01e03390";
+
+    //This is the 4th key
+    //private static final String API_KEY = "0c2b4a164e28cedcb0497549702fd764cedd8cda";
+
+    //5th one....
+    private static final String API_KEY = "de4a9ef2bd4dc48712ba2f5d90dcbc17aaaec6a1";
     public WhatToWatchEngine() {
         Retrofit retrofit = new Retrofit.Builder()
                 //.baseUrl("https://api.themoviedb.org/3/")
@@ -33,11 +39,7 @@ public class WhatToWatchEngine {
                 .build();
         mService = retrofit.create(WhatToWatchService.class);
     }
-/*
-    public Call<String> authenticate(){
-        return mService.authenticate(API_KEY);
-    }
-    */
+
     public Call<String> getChannelData(int channelID){
         return mService.getChannelData(channelID,API_KEY);
     }

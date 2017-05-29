@@ -14,7 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +53,8 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     private JSONObject resultData = null;
     private int totalResults;
 
+    @InjectView(R.id.filterFragLayout)
+    public RelativeLayout mView;
 
     /*
     @InjectView(R.id.genreSpinner)
@@ -62,7 +66,8 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     public Button searchButton;
     @InjectView(R.id.filterBack)
     public ImageView backButton;
-
+    @InjectView(R.id.relatedLabel)
+    public TextView relatedLabel;
     @InjectView(R.id.relatedEditText)
     public EditText relatedEditText;
     /*
@@ -131,16 +136,18 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
         ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mGenres);
       //  genreSpinner.setAdapter(genreAdapter);
         searchButton.setOnClickListener(this);
-      //  backButton.setOnClickListener(this);
+        backButton.setOnClickListener(this);
        // actorEditText.setHint("Enter actor or actress");
         if(isMovie){
             ArrayAdapter<String> movieAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, movieRatings);
       //      ratingSpinner.setAdapter(movieAdapter);
-            relatedEditText.setHint("Enter Movie");
+            relatedLabel.setText("Enter a movie to calibrate the search");
+            relatedEditText.setHint("E.g. Good Will Hunting");
         } else{
             ArrayAdapter<String> TVAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, TVratings);
        //     ratingSpinner.setAdapter(TVAdapter);
-            relatedEditText.setHint("Enter TV Show");
+            relatedLabel.setHint("Enter TV show to calibrate the search");
+            relatedEditText.setHint("E.g. Rick and Morty");
         }
 
         return view;
@@ -235,11 +242,21 @@ public class FilterFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if(v.getId()==searchButton.getId()){
+            /*
             if(isMovie){
                 getMoviesForSources();
             }else{
                 getTVShowsForSources();
             }
+            */
+            boolean hasActor = false;
+            // String actorName = actorEditText.getText().toString();
+            String relateTo = relatedEditText.getText().toString();
+            // String rating = ratingSpinner.getSelectedItem().toString();
+            //String genre = genreSpinner.getSelectedItem().toString();
+            Fragment loadingFrag = LoadingFragment.newInstance(isMovie,totalResults,"",hasActor,"",relateTo,"",mSources);
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.contentFrame, loadingFrag).commit();
         }
         else if(v.getId()==backButton.getId()) {
             Fragment moviesTVfrag = new MoviesTVFragment();
