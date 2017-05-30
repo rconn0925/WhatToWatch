@@ -3,6 +3,7 @@ package com.rossconnacher.whattowatch;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -21,7 +22,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Handler;
 
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -70,6 +74,9 @@ public class LoadingFragment extends Fragment {
     private ArrayList<Integer> allDataIDs;
     private ArrayList<String> allDataSources;
     private int numItemsInFilteredData;
+    private Runnable mRunable;
+    private AsyncTask mTask;
+    HashMap MediaIDAndSource;
 
     private WhatToWatchEngine mEngine;
     private FragmentManager fragmentManager;
@@ -122,10 +129,19 @@ public class LoadingFragment extends Fragment {
        // mShows = new ArrayList<>();
         //mMovies = new ArrayList<>();
         mMedia = new ArrayList<>();
+        MediaIDAndSource = new HashMap();
         mContext = getActivity();
         allDataLength = 0;
         numItemsInFilteredData =0;
         fragmentManager =getFragmentManager();
+
+        mTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                search(isMovie,mRelatedTo);
+                return null;
+            }
+        };
 
     }
 
@@ -135,7 +151,7 @@ public class LoadingFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_loading, container, false);
         ButterKnife.inject(this,view);
-        search(isMovie,mRelatedTo);
+        //search(isMovie,mRelatedTo);
         /*
         if(isMovie){
             getAllMoviesForSources();
@@ -143,6 +159,7 @@ public class LoadingFragment extends Fragment {
             getAllTVShowsForSources();
         }
         */
+        mTask.execute();
         return view;
     }
 
@@ -231,47 +248,9 @@ public class LoadingFragment extends Fragment {
                         String strID = (((JSONObject) allData.get(i)).get("id")).toString();
                         Log.d(TAG, "data" + i + ": " + strID);
                         int id = Integer.parseInt(strID);
-                        getMediaData(i,id);
-                        /*
-                        //check if ID is in cache
-                        if(isMovie){
-                            for (int j = 0; j<mSources.length;j++){
-                                String jsonString;
-                                try {
-                                    jsonString = Cache.readObject(mContext,mSources[j]+"movie").toString();
-                                    numItemsInFilteredData +=1;
-                                    if(jsonString.contains("\"id\":"+id)){
-                                        allDataIDs.add(id);
-                                        allDataSources.add(mSources[j]);
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } else {
-                            for (int j = 0; j<mSources.length;j++){
-                                String jsonString;
-                                try {
-                                    jsonString = Cache.readObject(mContext,mSources[j]+"show").toString();
-                                    if(jsonString.contains("\"id\":"+id)){
-                                        getMediaData(i,id,mSources[j]);
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        for(int k = 0;k<allDataIDs.size();k++){
-                            getMediaData(allDataIDs.size(),allDataIDs.get(k),allDataSources.get(k));
-                            Log.d(TAG,"ALLELEMENTS: "+allDataIDs.get(k)+" "+allDataSources.get(k));
-                        }
-                        */
+                        filterMediaData(id);
                     }
-
+                    getFinalMediaData();
                 } catch (JSONException e) {
 
                 }
@@ -284,7 +263,83 @@ public class LoadingFragment extends Fragment {
 
     }
 
-    public void getMediaData(final int counter, int mediaID){
+    public void filterMediaData(int mediaID){
+        //Check if media is in the cache
+        if(isMovie){
+            for (int i = 0; i<mSources.length;i++) {
+                String jsonString;
+                try {
+                    jsonString = Cache.readObject(mContext, mSources[i] + "movie").toString();
+                    JSONArray cacheJson = new JSONArray(jsonString);
+                    for(int cacheCounter = 0; cacheCounter < cacheJson.length();cacheCounter++){
+                        JSONObject jsonMovie = cacheJson.getJSONObject(cacheCounter);
+                        int cacheID = jsonMovie.getInt("id");
+                        if(mediaID == cacheID){
+                            MediaIDAndSource.put(mediaID,mSources[i]);
+                        }
+                    }
+
+                }  catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            for (int i = 0; i<mSources.length;i++) {
+                String jsonString;
+                try {
+                    jsonString = Cache.readObject(mContext, mSources[i] + "show").toString();
+                    JSONArray cacheJson = new JSONArray(jsonString);
+                    for(int cacheCounter = 0; cacheCounter < cacheJson.length();cacheCounter++){
+                        JSONObject jsonMovie = cacheJson.getJSONObject(cacheCounter);
+
+                        int cacheID = jsonMovie.getInt("id");
+                        Log.d(TAG, "cacheid: " + cacheID + "  media id:"+ mediaID);
+                        if(mediaID == cacheID){
+                            Log.d(TAG, "CACHE MATCH: "+ mediaID);
+                            MediaIDAndSource.put(mediaID,mSources[i]);
+                        }
+                    }
+                }  catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void getFinalMediaData(){
+        Log.d(TAG, "getFinalMEdia");
+        Iterator it = MediaIDAndSource.entrySet().iterator();
+        int i =0;
+        if(MediaIDAndSource.size()==0){
+            getMediaData(0,0,"");
+        }else {
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                Log.d(TAG,(i+" "+pair.getKey() + " = " + pair.getValue()));
+                getMediaData(i,(int)pair.getKey(),pair.getValue().toString());
+                i++;
+                //it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+
+
+    public void getMediaData(final int counter, int mediaID, final String source){
+        if(MediaIDAndSource.size()==0){
+            Log.d(TAG,"nextFragPlz");
+            Fragment resultFrag = SearchResultFragment.newInstance(isMovie,null);
+            fragmentManager.beginTransaction().replace(R.id.contentFrame, resultFrag).commit();
+            return;
+        }
+        Log.d(TAG,"coutner: "+ counter);
         Call<String> call;
         if(isMovie){
             call = mEngine.getMovie(mediaID);
@@ -318,14 +373,11 @@ public class LoadingFragment extends Fragment {
                         imgUrl = jsonObj.getString("artwork_448x252");
                     }
 
-
-
-
-
-                    Media media = new Media(title,id,"",rating,overview,imgUrl);
+                    Media media = new Media(title,id,source,rating,overview,imgUrl);
                     mMedia.add(media);
-                    Log.d(TAG,"getTitle: "+ media.getTitle());
-                    if(counter==allDataLength-1){
+                    Log.d(TAG,MediaIDAndSource.size()+ " "+ counter);
+                    if(counter==MediaIDAndSource.size()-1||MediaIDAndSource.size() ==0){
+                        Log.d(TAG,"nextFragPlz");
                         Fragment resultFrag = SearchResultFragment.newInstance(isMovie,mMedia);
                         fragmentManager.beginTransaction().replace(R.id.contentFrame, resultFrag).commit();
                     }

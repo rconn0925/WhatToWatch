@@ -89,8 +89,9 @@ public class SearchResultFragment extends Fragment implements View.OnClickListen
         if (getArguments() != null) {
             isMovie = getArguments().getBoolean(ARG_PARAM2);
             mMedia = (ArrayList<Media>) getArguments().getSerializable(ARG_PARAM1);
-           Log.d(TAG,"media: "+mMedia.get(0).getTitle());
-
+            if(mMedia!=null){
+                Log.d(TAG,"media: "+mMedia.get(0).getTitle());
+            }
         }
     }
 

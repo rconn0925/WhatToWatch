@@ -176,7 +176,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener{
                 Cache.readObject(getActivity(),sourceMovieDataFilePath);
                 String cacheShowData = Cache.readObject(getActivity(),sourceShowDataFilePath).toString();
                 String cacheMovieData = Cache.readObject(getActivity(),sourceMovieDataFilePath).toString();
-                if(cacheMovieData.equals("[]")||cacheShowData.equals("[]")){
+                if(cacheMovieData.equals("[]") || cacheShowData.equals("[]") || cacheMovieData.equals("") || cacheShowData.equals("")){
                     return false;
                 }
                 Log.d(TAG, "cacheData: "+ cacheShowData);
